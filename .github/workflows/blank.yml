@@ -29,6 +29,19 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+          # urllib3 에서 six 모듈 지원이 중단되어, 1.x 버전을 사용하도록 재설치
+          pip3 uninstall -y urllib3
+          pip3 install "urllib3<2"
+      - name: Run main.py
+        run: |
+          python3 main.py
+        env:
+          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5 #파이썬 version 에 맞춰서 setup 을 해주는 action
         with:
